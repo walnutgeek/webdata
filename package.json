@@ -24,12 +24,13 @@
   },
   "homepage": "https://github.com/walnutgeek/webdata#readme",
   "devDependencies": {
+    "mocha": "^2.4.5",
     "webpack": "^1.12.4"
   },
   "dependencies": {
     "express": "^4.13.3",
     "optimist": "^0.6.1",
-    "wdf": "0.0.5",
+    "wdf": "0.0.6",
     "wdf-loader": "0.0.2"
   }
 }

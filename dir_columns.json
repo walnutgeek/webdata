@@ -1,0 +1,7 @@
+[
+{ "name": "filename", "type": "link" },
+{ "name": "size" , "type": "number" },
+{ "name": "type", "type": "string" },
+{ "name": "mime", "type": "string" },
+{ "name": "details", "type": "string"},
+]
