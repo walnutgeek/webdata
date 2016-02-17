@@ -1,0 +1,35 @@
+{
+  "name": "webdata",
+  "version": "0.0.1",
+  "description": "Share data on web",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/walnutgeek/webdata.git"
+  },
+  "keywords": [
+    "web",
+    "data",
+    "pandas",
+    "dataframe",
+    "json"
+  ],
+  "author": "walnutgeek",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/walnutgeek/webdata/issues"
+  },
+  "homepage": "https://github.com/walnutgeek/webdata#readme",
+  "devDependencies": {
+    "webpack": "^1.12.4"
+  },
+  "dependencies": {
+    "express": "^4.13.3",
+    "optimist": "^0.6.1",
+    "wdf": "0.0.5",
+    "wdf-loader": "0.0.2"
+  }
+}
