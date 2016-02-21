@@ -4,7 +4,8 @@
   "description": "Share data on web",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "fa": "node ./scripts.js svgs"
   },
   "repository": {
     "type": "git",
@@ -25,12 +26,13 @@
   "homepage": "https://github.com/walnutgeek/webdata#readme",
   "devDependencies": {
     "mocha": "^2.4.5",
+    "wdf-loader": "0.0.4",
     "webpack": "^1.12.4"
   },
   "dependencies": {
     "express": "^4.13.3",
+    "font-awesome-svg-png": "^1.1.5",
     "optimist": "^0.6.1",
-    "wdf": "0.0.6",
-    "wdf-loader": "0.0.2"
+    "wdf": "0.0.6"
   }
 }

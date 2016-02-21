@@ -26,20 +26,19 @@ if (argv.help) {
 
 var http = require('http');
 var req = http.request({
-  hostname: 'localhost',
-  port: argv.port,
-  path: '/.pid'
-}, function (res){
-  var pid = '';
-  res.on('data', function (chunk) {
-    pid += chunk;
-  });
-  res.on('end', function () {
-    console.log('sending SIGINT to:',pid);
-    process.kill(pid, 'SIGINT');
-    setTimeout(start_server, argv.shutdown ? 10 : 1000);
-  });
-});
+    hostname: 'localhost', port: argv.port, path: '/.pid'
+  },function (res){
+    var pid = '';
+    res.on('data', function (chunk) {
+      pid += chunk;
+    });
+    res.on('end', function () {
+      console.log('sending SIGINT to:',pid);
+      process.kill(pid, 'SIGINT');
+      setTimeout(start_server, argv.shutdown ? 10 : 1000);
+    });
+  }
+);
 req.on('error', function () {
   start_server();
 });
@@ -54,8 +53,7 @@ function start_server (){
   var server = app.listen(argv.port, function () {
     var host = server.address().address;
     var port = server.address().port;
-
-    console.log('Example app listening at http://%s:%s', host, port);
+    console.log('Webdata app is listening: http://%s:%s', host, port);
   });
 
   process.on('SIGINT', function() {

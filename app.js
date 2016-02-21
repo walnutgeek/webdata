@@ -1,7 +1,7 @@
 module.exports = function(dir){
   var express = require("express");
 
-  var app =  express();
+  var app = express();
 
   function setContentType(res,type,charset) {
     res.setHeader('Content-Type', type + (charset ? '; charset=' + charset : ''));
