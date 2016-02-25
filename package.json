@@ -4,6 +4,7 @@
   "description": "Share data on web",
   "main": "index.js",
   "scripts": {
+    "wdf": "cd ../wdf && npm pack && cd ../webdata && npm uni -save wdf && npm i -save ../wdf/wdf-0.0.7.tgz",
     "test": "echo \"Error: no test specified\" && exit 1",
     "fa": "node ./scripts.js svgs"
   },
@@ -25,14 +26,19 @@
   },
   "homepage": "https://github.com/walnutgeek/webdata#readme",
   "devDependencies": {
+    "copy-webpack-plugin": "^1.1.1",
     "mocha": "^2.4.5",
-    "wdf-loader": "0.0.4",
-    "webpack": "^1.12.4"
+    "npm-run-all": "^1.5.1",
+    "shjs": "0.0.1",
+    "style-loader": "^0.13.0",
+    "wdf-loader": "0.0.6",
+    "webpack": "^2.1.0-beta.2"
   },
   "dependencies": {
+    "async": "^1.5.2",
     "express": "^4.13.3",
     "font-awesome-svg-png": "^1.1.5",
     "optimist": "^0.6.1",
-    "wdf": "0.0.6"
+    "wdf": "file:../wdf/wdf-0.0.7.tgz"
   }
 }
