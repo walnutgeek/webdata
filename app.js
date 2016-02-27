@@ -1,5 +1,7 @@
 module.exports = function(dir){
   var express = require("express");
+  var path = require("path");
+  var Mount = require("./Mount");
 
   var app = express();
 
@@ -12,9 +14,16 @@ module.exports = function(dir){
     res.send(''+process.pid);
   });
 
-  app.get('/', function (req, res) {
-    res.send('Hello World!');
-  });
+  var code_mnt = new Mount(path.resolve(__dirname, 'app'));
+  app.get(new RegExp('/.app(/.*)'), code_mnt.middleware());
 
+  var raw_mnt = new Mount(path.resolve(__dirname, dir));
+  app.get(new RegExp('/.raw(/.*)'), raw_mnt.middleware());
+
+  app.get(new RegExp('.*'), code_mnt.middleware('/index.html'));
+
+  app.use(function(err, req, res, next) {
+    throw err;
+  });
   return app;
 };

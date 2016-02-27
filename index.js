@@ -35,13 +35,12 @@ var req = http.request({
     res.on('end', function () {
       console.log('sending SIGINT to:',pid);
       process.kill(pid, 'SIGINT');
-      setTimeout(start_server, argv.shutdown ? 10 : 1000);
+      setTimeout( start_server, argv.shutdown ? 10 : 1000);
     });
   }
 );
-req.on('error', function () {
-  start_server();
-});
+
+req.on('error', start_server);
 req.end();
 
 function start_server (){
