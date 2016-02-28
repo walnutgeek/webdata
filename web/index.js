@@ -1,3 +1,4 @@
+require("normalize.css/normalize.css");
 require("wdf/wdf_view.css");
 require("./style.scss");
 
@@ -16,6 +17,16 @@ window.onpopstate = function(event){
     navigate(event.state.path);
 };
 
+var icons = require('../black/icons');
+function update_icons() {
+  $('[data-icon]').each(function (idx, $i) {
+    var svg = icons[$i.getAttribute('data-icon')];
+    $i.innerHTML = svg;
+    $i.firstChild.setAttribute('height', '1em');
+    $i.firstChild.setAttribute('width', '1em');
+  });
+}
+
 function navigate(path, stateAction, reload){
     reload = _.isUndefined(reload) ?  true : reload ;
     current_file = new WebFile(path);
@@ -28,7 +39,8 @@ function navigate(path, stateAction, reload){
     $('#header').html( path_template({
         file: current_file
     }));
-    if( ! reload ) return;
+  update_icons();
+  if( ! reload ) return;
     var url = '/.raw' + current_file.path() ;
     $('#main').html('');
     $.ajax({
