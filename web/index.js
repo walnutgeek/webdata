@@ -8,7 +8,7 @@ var u$ = require('wdf/utils');
 
 var $ = window.jQuery = window.$ = require("jquery");
 
-var path_template = _.template(require('raw!./templates/path.html'));
+var path_template = _.template(require('./templates/path.html'));
 
 var WebFile = require('./WebFile');
 

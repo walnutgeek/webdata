@@ -2,7 +2,7 @@ var _ = require("lodash");
 var wdf = require('wdf');
 var WebFile = wdf.WebPath ;
 var templates = {
-     file: _.template(require('raw!./templates/file.html')),
+     file: _.template(require('./templates/file.html')),
 };
 
 WebFile.prototype.setContent=function(res,status,data){

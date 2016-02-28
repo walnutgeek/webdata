@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "wdf": "cd ../wdf && npm pack && cd ../webdata && npm uni -save wdf && npm i -save ../wdf/wdf-0.0.7.tgz",
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "mocha -r ./mocha_shim",
     "fa": "node ./scripts.js svgs"
   },
   "repository": {
