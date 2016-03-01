@@ -1,19 +1,16 @@
 var optimist = require('optimist');
 
-var argv = optimist
-    .usage('Run webdata server\nUsage: $0')
+var options = optimist.usage('Run webdata server\nUsage: $0')
     .describe('h', 'Display the usage')
-    .alias('h', 'help')
-    .describe('p', 'a port to listen')
-    .alias('p', 'port')
-    .default('p',7532)
-    .describe('s','shutdown server')
-    .alias('s', 'shutdown')
-    .boolean('s')
-    .describe('d','a directory to publish')
-    .alias('d','dir')
-    .default('d','.')
-    .argv;
+      .alias('h', 'help')
+    .describe('p', 'a port to listen').default('p',7532)
+      .alias('p', 'port')
+    .describe('s','shutdown server').boolean('s')
+      .alias('s', 'shutdown')
+    .describe('d','a directory to publish').default('d','.')
+      .alias('d','dir');
+
+var argv = options.argv;
 
 if (argv._.length > 0){
   console.log("Unknown options:", argv._ );
