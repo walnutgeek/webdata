@@ -18,12 +18,13 @@ window.onpopstate = function(event){
 };
 
 var icons = require('../black/icons');
+
 function update_icons() {
-  $('[data-icon]').each(function (idx, $i) {
-    var svg = icons[$i.getAttribute('data-icon')];
-    $i.innerHTML = svg;
-    $i.firstChild.setAttribute('height', '1em');
-    $i.firstChild.setAttribute('width', '1em');
+  $('[data-icon]').each(function (idx, elem) {
+    var svg = icons[elem.getAttribute('data-icon')];
+    elem.innerHTML = svg;
+    elem.firstChild.setAttribute('height', '1em');
+    elem.firstChild.setAttribute('width', '1em');
   });
 }
 
@@ -39,10 +40,15 @@ function navigate(path, stateAction, reload){
     $('#header').html( path_template({
         file: current_file
     }));
-  update_icons();
-  if( ! reload ) return;
+    update_icons();
+
+    if( ! reload ) return;
+
+    //current_file.mime()
+
     var url = '/.raw' + current_file.path() ;
     $('#main').html('');
+
     $.ajax({
         url: url,
         dataType: 'text',

@@ -41,6 +41,7 @@ Mount.prototype.listdir=function(p,fn){
               var stat = stats[i];
               var type = 'file';
               var size = 0 ;
+              var mtime = stat.mtime;
               var isdir = stat.isDirectory();
               if (isdir) {
                 type = 'dir';
@@ -49,7 +50,7 @@ Mount.prototype.listdir=function(p,fn){
                 size = stat.size;
               }
               var cwp = wp.child(file,isdir);
-              return [cwp.link(),size,type,cwp.mime(),""];
+              return [cwp.link(),size,type,cwp.mime(),mtime,""];
             });
             var df = new DataFrame(rows, {columns: require('./dir_columns.json')});
             fn(null, df);

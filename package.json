@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "wdf": "cd ../wdf && npm pack && cd ../webdata && npm uni -save wdf && npm i -save ../wdf/wdf-0.0.7.tgz",
+    "wdfload": "cd ../wdf-loader && npm pack && cd ../webdata && npm uni -save-dev wdf-loader && npm i -save-dev ../wdf-loader/wdf-loader-0.0.6.tgz",
     "test": "mocha -r ./mocha_shim",
     "fa": "node ./scripts.js svgs"
   },

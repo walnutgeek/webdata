@@ -4,13 +4,14 @@ var WebFile = wdf.WebPath ;
 var templates = {
      file: _.template(require('./templates/file.html')),
 };
-var LRU = require("lru-cache");
 
-var chunkCache = LRU({
-  max: 10000,
-  length: function (n, key) { return n.length; },
-  maxAge: 1000 * 60 * 60
-});
+//var LRU = require("lru-cache");
+//
+//var chunkCache = LRU({
+//  max: 10*1024*1024, //10Mb
+//  length: function (n, key) { return n.length; },
+//  maxAge: 1000 * 60 * 60
+//});
 
 
 WebFile.prototype.setContent=function(res,status,data){

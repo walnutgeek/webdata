@@ -3,5 +3,6 @@
 { "name": "size" , "type": "number" },
 { "name": "type", "type": "string" },
 { "name": "mime", "type": "string" },
+{ "name": "modified", "type": "timestamp" },
 { "name": "details", "type": "string"}
 ]
