@@ -88,5 +88,44 @@ Mount.prototype.middleware = function(p){
   };
 };
 
+Mount.prototype.scanForRecords = function( path, o, callback){
+/**
+ @param path {WebPath}
+   path within mount
+ @param o.position
+   position of record either non-negative number, and  -1 or `'eof'`
+   for  end of file, 'EOF'. It cloud be beginning of record if `o.direction`
+   point forward, or end+1 otherwise.
+ @param o.direction either `'F'` for forward, or `'B'`
+   for backward, if omitted exception will be thrown.
+ @param o.size initial
+   size of buffer to be scanned for records
+ @param o.waste_threshold number  >0.0 <1.0
+   @optional
+   @default 0.1
+   define portion of buffer that can be wasted it record spill over threshold.
+ @param o.increment_size integer
+   @optional
+   @default Math.max(2048,o.size * o.waste_threshold)
+   when in initial buffer of `o.size` loaded and reasonably
+   big portion of this buffer cannot be detected as record because
+   did not fit in, buffer will be increased by that `o.increment_size`
+   until it load that record.
+ @param o.detect_record function(buffer, offset, direction)
+   ` returns position of next record detect or `undefined` if end of buffer
+   is reached
+ @param callback function(err,results)
+   @param results.data array of `Buffer` objects in order as they were in file
+   @param results.start_position start position, same as o.position except
+     case EOF was provided, then it will be file size.
+   @param results.end_position whe scan finished. Keep in mind it will be
+     smaller that `results.start_position` if scanning backward.
+   @param results.mtime modification time of file
+   @param results.filesize size of file
+ */
+
+
+};
+
 
 module.exports=Mount;
