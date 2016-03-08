@@ -37,26 +37,60 @@ describe( 'Mount',function() {
     });
 
   });
-  it('scanForRecords', function (done) {
+  function assert_records(done,r,count,total,filesize){
+    assert.equal(r.data.length, count);
+    assert.equal(r.filesize, filesize);
+    assert.equal(r.data.reduce(function(x,e){return e.length + x;},0),total);
+    done();
+  }
+  it('scanForRecords csv forward', function (done) {
     var mnt = new Mount('.');
     mnt.scanForRecords(
-        '/data/hillary-clinton-emails-release-2015-09-11-01-39-01/Emails.csv',
+        '/test/data/clinton-emails-extract.csv',
         {
           position: 0,
           size: 16000,
           direction: 'F',
           detect_record: Mount.detect.CSV_SEPARATED
-        }, done);
+        }, function(e,r){
+          assert_records(done,r,5,13986,62419);
+        });
   });
-  it('scanForRecords2', function (done) {
+  it('scanForRecords csv backward', function (done) {
     var mnt = new Mount('.');
     mnt.scanForRecords(
-        '/data/hillary-clinton-emails-release-2015-09-11-01-39-01/Emails.csv',
+        '/test/data/clinton-emails-extract.csv',
         { position: -1,
           size: 16000,
           direction: 'B',
           detect_record: Mount.detect.CSV_SEPARATED
-        }, done);
+        }, function(e,r){
+          assert_records(done,r,2,13188,62419);
+        });
   });
-
+  it('scanForRecords lf forward', function (done) {
+    var mnt = new Mount('.');
+    mnt.scanForRecords(
+        '/test/data/derby.log',
+        {
+          position: 0,
+          size: 3000,
+          direction: 'F',
+          detect_record: Mount.detect.LF_SEPARATED
+        }, function(e,r){
+          assert_records(done,r,13,2877,19929);
+        });
+  });
+  it('scanForRecords lf backward', function (done) {
+    var mnt = new Mount('.');
+    mnt.scanForRecords(
+        '/test/data/derby.log',
+        { position: -1,
+          size: 3000,
+          direction: 'B',
+          detect_record: Mount.detect.LF_SEPARATED
+        }, function(e,r){
+          assert_records(done,r,16,2853,19929);
+        });
+  });
 });

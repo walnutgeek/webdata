@@ -176,13 +176,12 @@ Mount.prototype.scanForRecords = function( p, o, callback){
         }
 
       }
-      //console.log('err = ', err);
-      //console.log('data.length = ', result.data.length);
-      //console.log('total.length = ',
-      //    result.data.reduce(function(x,e){return e.length + x;},0));
-      //delete result.data;
-      //console.log('results = ', result);
-      //console.log('buf.length = ',buf.length );
+      console.log('err = ', err);
+      console.log('data.length = ', result.data.length);
+      console.log('total.length = ',
+          result.data.reduce(function(x,e){return e.length + x;},0));
+      console.log('filesize = ', result.filesize);
+      console.log('buf.length = ',buf.length );
       callback(err, result);
     });
   }
@@ -249,7 +248,7 @@ Mount.detect = {
             if (cc === QUOTE) {
               in_quotes = true;
             } else if (cc === LF && i < offset - 1 ) {
-              var new_offset = i + 1;
+              var new_offset = i + 1 ;
               return {rec: buffer.slice(new_offset, offset), offset: new_offset};
             }
           }
