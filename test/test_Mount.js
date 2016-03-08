@@ -37,4 +37,26 @@ describe( 'Mount',function() {
     });
 
   });
+  it('scanForRecords', function (done) {
+    var mnt = new Mount('.');
+    mnt.scanForRecords(
+        '/data/hillary-clinton-emails-release-2015-09-11-01-39-01/Emails.csv',
+        {
+          position: 0,
+          size: 16000,
+          direction: 'F',
+          detect_record: Mount.detect.CSV_SEPARATED
+        }, done);
+  });
+  it('scanForRecords2', function (done) {
+    var mnt = new Mount('.');
+    mnt.scanForRecords(
+        '/data/hillary-clinton-emails-release-2015-09-11-01-39-01/Emails.csv',
+        { position: -1,
+          size: 16000,
+          direction: 'B',
+          detect_record: Mount.detect.CSV_SEPARATED
+        }, done);
+  });
+
 });

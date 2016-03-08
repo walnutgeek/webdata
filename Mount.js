@@ -87,20 +87,20 @@ Mount.prototype.middleware = function(p){
     }
   };
 };
-
-Mount.prototype.scanForRecords = function( path, o, callback){
+var directions = { F: +1, B: -1 };
+Mount.prototype.scanForRecords = function( p, o, callback){
 /**
  @param path {WebPath}
    path within mount
  @param o.position
-   position of record either non-negative number, and  -1 or `'eof'`
-   for  end of file, 'EOF'. It cloud be beginning of record if `o.direction`
-   point forward, or end+1 otherwise.
+   position of record either non-negative number, and  -1  for  end of file.
+   It cloud be beginning of record if `o.direction` point forward, or end+1
+   otherwise.
  @param o.direction either `'F'` for forward, or `'B'`
    for backward, if omitted exception will be thrown.
  @param o.size initial
    size of buffer to be scanned for records
- @param o.waste_threshold number  >0.0 <1.0
+ @param o.waste_threshold number between 0.0 and 1.0
    @optional
    @default 0.1
    define portion of buffer that can be wasted it record spill over threshold.
@@ -123,9 +123,139 @@ Mount.prototype.scanForRecords = function( path, o, callback){
    @param results.mtime modification time of file
    @param results.filesize size of file
  */
+  ['position','size','direction'].forEach(function(k){
+    if( u$.isNullish(o.position) ) throw u$.error(k + " not optional");
+  });
+  if(! directions[o.direction] ){
+    throw u$.error('direction has to be one of:' + Object.keys(directions));
+  }
+  o.direction = directions[o.direction];
+  if( !_.isNumber(o.position) || o.position < -1){
+    throw u$.error({msg:'invalid position:' + o.position} );
+  }
+  wp = this.ensureWebPath(p);
+  if(wp.dir){
+    callback(u$.error({
+      message: "it is not WebPath directory",
+      path: wp.path()}));
+  }else {
+    var path = this._path(wp);
+    var result = {};
+    var buf = new Buffer(o.size);
+    async.auto({
+      fd: function (fn) {
+        fs.open(path, 'r', fn);
+      },
+      stat: ['fd', function (fn, r) {
+        fs.fstat(r.fd, fn);
+      }],
+      read: ['fd', 'stat', function (fn, r) {
+        result.mtime = r.stat.mtime;
+        result.filesize = r.stat.size;
+        if (o.position === -1) {
+          o.position = r.stat.size;
+        }
+        var p = o.direction === 1 ? o.position : o.position - o.size;
+        fs.read(r.fd, buf, 0, o.size, p, fn);
+      }],
+    }, function (err, results) {
+      if(!err){
+        result.data = [];
+        var offset = o.direction === 1 ? 0 : buf.length ;
+        for(;;) {
+          var r = o.detect_record(buf, offset , o.direction);
+          if(!r){
+            break;
+          }
+          offset = r.offset;
+          if( o.direction === -1){
+            result.data.splice(0, 0, r.rec);
+          }else{
+            result.data.push(r.rec);
+          }
+        }
 
-
+      }
+      //console.log('err = ', err);
+      //console.log('data.length = ', result.data.length);
+      //console.log('total.length = ',
+      //    result.data.reduce(function(x,e){return e.length + x;},0));
+      //delete result.data;
+      //console.log('results = ', result);
+      //console.log('buf.length = ',buf.length );
+      callback(err, result);
+    });
+  }
 };
 
+
+var LF = 10,  QUOTE = 34;
+
+Mount.detect = {
+  LF_SEPARATED :
+    function (buffer, offset, direction) {
+      if (direction === 1) {
+        for (var i = offset; i < buffer.length; i++) {
+          if (buffer[i] === LF) {
+            var new_offset = i + 1;
+            return {rec: buffer.slice(offset, new_offset), offset: new_offset};
+          }
+        }
+      } else if (direction === -1) {
+        for (var i = offset - 1; i >= 0; i--) {
+          if (buffer[i] === LF && i < offset - 1 ) {
+            var new_offset = i + 1;
+            return {rec: buffer.slice(new_offset, offset), offset: new_offset};
+          }
+        }
+      }
+    },
+  CSV_SEPARATED :
+    function (buffer, offset, direction) {
+      if (direction === 1) {
+        var in_quotes = false;
+        for (var i = offset; i < buffer.length; i++) {
+          var cc = buffer[i], nc = buffer[i+1];
+          if( in_quotes) {
+            if( cc === QUOTE ){
+              if(nc === QUOTE){
+                i++;
+              }else{
+                in_quotes = false;
+              }
+            }
+          }else{
+            if ( cc === QUOTE){
+              in_quotes = true ;
+            }else if (cc === LF) {
+              var new_offset = i + 1;
+              return {rec: buffer.slice(offset, new_offset), offset: new_offset};
+            }
+
+          }
+        }
+      } else if (direction === -1) {
+        for (var i = offset - 1; i >= 0; i--) {
+          var cc = buffer[i], nc = buffer[i-1];
+          if(in_quotes) {
+            if( cc === QUOTE ){
+              if(nc === QUOTE){
+                i--;
+              }else{
+                in_quotes = false;
+              }
+            }
+          }else{
+            if (cc === QUOTE) {
+              in_quotes = true;
+            } else if (cc === LF && i < offset - 1 ) {
+              var new_offset = i + 1;
+              return {rec: buffer.slice(new_offset, offset), offset: new_offset};
+            }
+          }
+        }
+      }
+    }
+};
 
 module.exports=Mount;
