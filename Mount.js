@@ -87,34 +87,26 @@ Mount.prototype.middleware = function(p){
     }
   };
 };
+
 var directions = { F: +1, B: -1 };
+
 Mount.prototype.scanForRecords = function( p, o, callback){
 /**
- @param path {WebPath}
+ @param p `wdf/WebPath` or `String`
    path within mount
- @param o.position
-   position of record either non-negative number, and  -1  for  end of file.
+ @param o.position `int`
+   position of record either non-negative number, or  -1  for  end of file.
    It cloud be beginning of record if `o.direction` point forward, or end+1
    otherwise.
  @param o.direction either `'F'` for forward, or `'B'`
    for backward, if omitted exception will be thrown.
- @param o.size initial
+ @param o.size `int`
+   @default 65535
    size of buffer to be scanned for records
- @param o.waste_threshold number between 0.0 and 1.0
-   @optional
-   @default 0.1
-   define portion of buffer that can be wasted it record spill over threshold.
- @param o.increment_size integer
-   @optional
-   @default Math.max(2048,o.size * o.waste_threshold)
-   when in initial buffer of `o.size` loaded and reasonably
-   big portion of this buffer cannot be detected as record because
-   did not fit in, buffer will be increased by that `o.increment_size`
-   until it load that record.
- @param o.detect_record function(buffer, offset, direction)
-   ` returns position of next record detect or `undefined` if end of buffer
+ @param o.detect_record `function(buffer, offset, direction)`
+   returns position of next record detected or `undefined` if end of buffer
    is reached
- @param callback function(err,results)
+ @param callback `function(err,results)`
    @param results.data array of `Buffer` objects in order as they were in file
    @param results.start_position start position, same as o.position except
      case EOF was provided, then it will be file size.
@@ -133,7 +125,18 @@ Mount.prototype.scanForRecords = function( p, o, callback){
   if( !_.isNumber(o.position) || o.position < -1){
     throw u$.error({msg:'invalid position:' + o.position} );
   }
+  if( _.isUndefined(o.size) ){
+    o.size = 65535;
+  }
+  if( !_.isNumber(o.size) || o.size <= 0 ){
+    throw u$.error({msg:'invalid size:' + o.size } );
+  }
   wp = this.ensureWebPath(p);
+  if(!o.detect_record){
+    var ext = wp.extension();
+    o.detect_record =  (ext && ext.toLowerCase() === 'csv') ?
+        Mount.detect.CSV_SEPARATED: Mount.detect.LF_SEPARATED;
+  }
   if(wp.dir){
     callback(u$.error({
       message: "it is not WebPath directory",
@@ -142,48 +145,47 @@ Mount.prototype.scanForRecords = function( p, o, callback){
     var path = this._path(wp);
     var result = {};
     var buf = new Buffer(o.size);
-    async.auto({
-      fd: function (fn) {
-        fs.open(path, 'r', fn);
-      },
-      stat: ['fd', function (fn, r) {
-        fs.fstat(r.fd, fn);
-      }],
-      read: ['fd', 'stat', function (fn, r) {
-        result.mtime = r.stat.mtime;
-        result.filesize = r.stat.size;
-        if (o.position === -1) {
-          o.position = r.stat.size;
-        }
-        var p = o.direction === 1 ? o.position : o.position - o.size;
-        fs.read(r.fd, buf, 0, o.size, p, fn);
-      }],
-    }, function (err, results) {
-      if(!err){
-        result.data = [];
-        var offset = o.direction === 1 ? 0 : buf.length ;
-        for(;;) {
-          var r = o.detect_record(buf, offset , o.direction);
-          if(!r){
-            break;
+    async.auto(
+      {
+        fd: function (fn) {
+          fs.open(path, 'r', fn);
+        },
+        stat: ['fd', function (fn, r) {
+          fs.fstat(r.fd, fn);
+        }],
+        read: ['fd', 'stat', function (fn, r) {
+          result.mtime = r.stat.mtime;
+          result.filesize = r.stat.size;
+          if (o.position === -1) {
+            o.position = r.stat.size;
           }
-          offset = r.offset;
-          if( o.direction === -1){
-            result.data.splice(0, 0, r.rec);
-          }else{
-            result.data.push(r.rec);
+          var size = o.size ;
+          var pos = o.direction === 1 ? o.position : o.position - o.size;
+          if( pos < 0 ){
+            pos = 0;
+            size = o.position;
+          }
+          fs.read(r.fd, buf, 0, size, pos, fn);
+        }]
+      }, function (err, results) {
+        if(!err){
+          result.data = [];
+          var offset = o.direction === 1 ? 0 : results.read[0] ;
+          for(;;) {
+            var r = o.detect_record(buf, offset , o.direction);
+            if(!r){
+              break;
+            }
+            offset = r.offset;
+            if( o.direction === -1){
+              result.data.splice(0, 0, r.rec);
+            }else{
+              result.data.push(r.rec);
+            }
           }
         }
-
-      }
-      console.log('err = ', err);
-      console.log('data.length = ', result.data.length);
-      console.log('total.length = ',
-          result.data.reduce(function(x,e){return e.length + x;},0));
-      console.log('filesize = ', result.filesize);
-      console.log('buf.length = ',buf.length );
-      callback(err, result);
-    });
+        callback(err, result);
+      });
   }
 };
 
