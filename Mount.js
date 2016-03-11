@@ -88,6 +88,56 @@ Mount.prototype.middleware = function(p){
   };
 };
 
+Mount.prototype.scan_middleware = function(){
+  var mnt = this;
+  return function(req,res,next){
+    try {
+      var direction = req.params[0][0] ;
+      var position = +(req.params[0].substring(1));
+      var wp = mnt.ensureWebPath( req.params[1] );
+      if (wp.dir) {
+        mnt.listdir(wp, function (err, df) {
+          if (!err && !df) {
+            err = new Error("df is not defined for wp:" + wp.toString());
+          }
+          if (err) {
+            next(err);
+          } else {
+            res.setHeader('Content-Type', 'application/octet-stream');
+            var buf = new Buffer(df.to_wdf(),'utf8');
+            res.write(JSON.stringify({
+              filesize: buf.length,
+              mtime: new Date(),
+              start_position: 0,
+              end_position: buf.length,
+              num_of_records: df.getRecordCount()+1,
+              content_type: wp.mime(),
+            }));
+            res.write("\n");
+            res.write(buf);
+            res.end();
+          }
+        });
+      } else {
+        mnt.scanForRecords(wp,{ direction: direction, position: position},
+            function(err,r){
+              var data = r.data;
+              delete r.data;
+              res.setHeader('Content-Type', 'application/octet-stream');
+              res.write(JSON.stringify(r));
+              res.write('\n');
+              for(var i = 0 ; i < data.length ; i++ ){
+                res.write(data[i]);
+              }
+              res.end();
+            });
+      }
+    }catch(e){
+      next(u$.error({wp: wp.toString()},e));
+    }
+  };
+};
+
 var directions = { F: +1, B: -1 };
 
 Mount.prototype.scanForRecords = function( p, o, callback){
@@ -170,10 +220,14 @@ Mount.prototype.scanForRecords = function( p, o, callback){
       }, function (err, results) {
         if(!err){
           result.data = [];
-          var offset = o.direction === 1 ? 0 : results.read[0] ;
+          var offset =  o.direction === 1 ? 0 : results.read[0] ;
+          result.start_position = pos + offset;
+          result.content_type = wp.mime();
           for(;;) {
-            var r = o.detect_record(buf, offset , o.direction);
+            var r = o.detect_record(buf, offset, o.direction);
             if(!r){
+              result.end_position = pos + offset;
+              result.num_of_records = result.data.length;
               break;
             }
             offset = r.offset;

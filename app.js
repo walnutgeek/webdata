@@ -18,7 +18,12 @@ module.exports = function(dir){
   app.get(new RegExp('/.app(/.*)'), code_mnt.middleware());
 
   var raw_mnt = new Mount(path.resolve(__dirname, dir));
-  app.get(new RegExp('/.raw(/.*)'), raw_mnt.middleware());
+  app.get(
+      new RegExp('/.raw(/.*)'),
+      raw_mnt.middleware() );
+  app.get(
+      new RegExp('/.scan/([FB]-?\\d+)(/.*)'),
+      raw_mnt.scan_middleware() );
 
   app.get(new RegExp('.*'), code_mnt.middleware('/index.html'));
 
