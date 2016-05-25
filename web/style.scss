@@ -38,3 +38,14 @@ $header_hight: 40;
 i svg {
   vertical-align:text-bottom;
 }
+
+.dash-anim {
+  stroke-dasharray: 15 15;
+  animation: dash 1s infinite ;
+}
+
+@keyframes dash {
+  to {
+    stroke-dashoffset: 30;
+  }
+}

@@ -112,6 +112,7 @@ Mount.prototype.scan_middleware = function(){
               end_position: buf.length,
               num_of_records: df.getRecordCount()+1,
               content_type: wp.mime(),
+              direction: 'F'
             }));
             res.write("\n");
             res.write(buf);
@@ -121,6 +122,7 @@ Mount.prototype.scan_middleware = function(){
       } else {
         mnt.scanForRecords(wp,{ direction: direction, position: position},
             function(err,r){
+              r.direction = direction ;
               var data = r.data;
               delete r.data;
               res.setHeader('Content-Type', 'application/octet-stream');

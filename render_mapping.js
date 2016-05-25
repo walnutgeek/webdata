@@ -7,7 +7,7 @@ module.exports = function(mime){
     }
     if(p[p.length-1] === '*'){
       var prefix = p.substr(0, p.length-1);
-      if( mime.indexof(prefix) === 0 ){
+      if( mime.indexOf(prefix) === 0 ){
         return df.getObjectRow(i);
       }
     }

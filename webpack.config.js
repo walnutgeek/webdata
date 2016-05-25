@@ -34,6 +34,10 @@ function cfg(entry_point, out_file) {
         }
       ],
       loaders: [
+        { test: /.jsx$/,
+          loader: 'babel',
+          exclude: /node_modules/,
+          query: { presets: ['es2015', 'react','stage-1'] } },
         { test: /\.js$/,
           loader: "uglify" },
         { test: /\.css$/,
@@ -50,6 +54,7 @@ function cfg(entry_point, out_file) {
           loader: 'wdf'},
         { test: /\.json$/,
           loader: 'json'},
+
       ],
     },
     plugins: [
@@ -64,6 +69,6 @@ function cfg(entry_point, out_file) {
 }
 
 module.exports = [
-  cfg("./web/index.js", name + ".js"),
-  cfg("mocha!./web/tests.js","testBundle.js")
+  cfg("./web/index.jsx",       name + ".js"),
+  cfg("mocha!./web/tests.js", "testBundle.js")
 ];

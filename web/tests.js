@@ -1,10 +1,10 @@
 require('mocha/mocha.css');
 var assert = require("assert");
 describe( 'tests', function() {
-  it('WebFile', function () {
-    var WebFile = require('./WebFile');
+  it('WebPath', function () {
+    var WebPath = require('wdf/WebPath');
     function test_enum(s){
-      var f = new WebFile(s);
+      var f = new WebPath(s);
       assert.equal(s, f.path());
       var e = f.enumerate();
       var n = (arguments.length -1)/2;

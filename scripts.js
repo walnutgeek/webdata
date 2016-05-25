@@ -40,7 +40,7 @@ function generate_svgs(icons, color) {
 var scripts =  {
   svgs: function(){
     var icons = [
-      'eye','eye-slash',
+      'spinner', 'eye','eye-slash',
       'home','filter',
       'sort-amount-asc',
       'sort-amount-desc',
