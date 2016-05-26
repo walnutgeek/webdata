@@ -33,11 +33,7 @@ export const subscribeEvent = (event_name, getNewState, DecoratedComponent)=>(
       componentWillUnmount() {
         ee.removeListener(event_name,this.onNewState);
       }
-      onNewState = () => {
-        if (this.isMounted()){
-          this.setState(getNewState(this.props));
-        }
-      }
+      onNewState = () =>  this.setState(getNewState(this.props))
       render(){
         return <DecoratedComponent {...this.props} {...this.state} />;
       }

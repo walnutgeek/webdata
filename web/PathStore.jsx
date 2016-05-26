@@ -4,13 +4,10 @@ import WebPath from 'wdf/WebPath';
 /*
  * PathStore
  */
-
 var _path = new WebPath('/');
-
 
 export const getPath = () => ( {path:_path} );
 
-// Register callback to handle all updates
 dispach.register( ({actionType,...action} ) => {
   switch (actionType) {
     case ACTIONS.NAVIGATE:

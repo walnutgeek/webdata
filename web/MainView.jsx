@@ -11,6 +11,7 @@ export const MainView = subscribeEvent(EVENTS.PATH_CHANGE,getPath,
     ({path}) => {
       var component = renderer_mapping(path.mime()).component;
       var View = require('./views/' + component + '.jsx').default;
+      console.log('wv:',path.path());
       return <View webfile={path}/>;
     }
 );

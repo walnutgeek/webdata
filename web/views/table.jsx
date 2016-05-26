@@ -93,15 +93,18 @@ export class Table extends Component {
 export default class TableView extends Component {
   constructor(props){
     super(props);
-    console.log(this.props.webfile.path());
-    webutils.http_promise('GET', '/.raw' + this.props.webfile.path()).then((s)=>{
-      this.setState({df: DataFrame.parse_wdf(s)});
-    });
+    this.load_wdf(this.props);
+  }
+  componentWillReceiveProps(newprops){
+    this.setState({df: null});
+    this.load_wdf(newprops);
+  }
+  load_wdf({webfile}){
+    webutils.http_promise('GET', '/.raw' + webfile.path())
+        .then( (s)=> this.setState( {df: DataFrame.parse_wdf(s)} ) );
   }
   render(){
     let df = this.state && this.state.df;
-
     return df && <Table df={ df } /> ;
-
   }
 };
