@@ -1,58 +1,66 @@
 import React, {PropTypes, Component} from 'react';
 import classNames from 'classnames';
-import _ from 'lodash';
+import u$ from 'wdf/utils';
 
-import ReactDOM from 'react-dom';
-import webutils from '../webutils.jsx';
+
+import styles,{m} from '../styles.jsx';
+
+import {dp,store,ACTIONS,ee} from '../dispatcher.jsx';
+
 import DataFrame from 'wdf/DataFrame';
-import DEFAULT_THEME from 'wdf/ViewTheme';
 
-const Masker = (props) => <div className="wdf_masker">{props.val}</div>;
+const Masker = ({val,mounted}) => ( <div ref={mounted} style={styles.wdf_masker}>{val}</div>);
 
-export const LinkComponent = ({link})=>(
-    <a className="wdf_link" href={ link.href }>
-      { link.text || link.href }</a>);
+function mounted_callback(componentRoot, col_idx,row_iidx){
+  return function(elem) {
+    componentRoot.setMasker({row_iidx, col_idx, elem});
+  };
+}
 
-export class HeaderTable extends Component {
-  render() {
-    return <table className={classNames(['wdf','wdf_header', this.props.id])}>
+export const HeaderTable = ({id,formats,componentRoot}) => (
+    <table style={styles.wdf_table} className={classNames(['wdf','wdf_header', id])}>
       <tbody>
-      <tr className="wdf">{this.props.formats.map((col) =>
-            <th className="wdf"  key={col.name} data-column={col.name}>
-              <Masker val={col.title}/>
-            </th>
-    )}</tr>
+      <tr style={styles.cell_borders} className="wdf">{formats.map(
+          (col) =>
+              <th style={m(styles.cell_borders_padding,styles.cell_borders)}
+                  className="wdf" key={col.name} data-column={col.name}>
+                <Masker val={col.title}
+                        mounted={ mounted_callback(componentRoot,col.col_idx,0) }
+                    />
+              </th>
+      )}</tr>
       </tbody>
-    </table>;
-  }
-};
+    </table>);
 
-class DataTable extends Component {
-  render() {
-    var rows = [];
-    for(var row_idx = 0 ; row_idx < this.props.df.getRowCount(); row_idx++ ) {
-      var odd_even = row_idx % 2 ? 'wdf_odd' : 'wdf_even' ;
-      let td_columns = this.props.formats.map( (col) => (
-              <td className="wdf"  key={col.name} data-column={col.name} >
-                <Masker val={col.format(this.props.df.get(row_idx,col.index))}/>
-              </td> )
+export const DataTable  = ({df,formats,componentRoot}) => {
+  console.log(componentRoot);
+  var rows = [];
+  rows.length = df.getRowCount();
+  if(df){
+    for(var row_idx = 0 ; row_idx < rows.length; row_idx++ ) {
+      let td_columns = formats.map( (col) => (
+        <td style={m(styles.cell_borders_padding,styles.cell_borders)}
+            className="wdf"  key={col.name} data-column={col.name} >
+          <Masker val={col.format(df.get(row_idx,col.index))}
+                  mounted={ mounted_callback(componentRoot,col.col_idx,row_idx+1)}
+              />
+        </td> )
       );
       rows[row_idx] = (
-        <tr className={classNames('wdf',odd_even)}  key={row_idx} data-row={row_idx}>
+        <tr style={m(styles.cell_borders,styles.even_odd_row[row_idx % 2])}
+            className='wdf'  key={row_idx} data-row={row_idx}>
           {td_columns}
         </tr> );
     }
-    return (
-        <table className={classNames(['wdf','wdf_data', this.id])}>
-          <tbody>
-            {rows}
-          </tbody>
-        </table> );
   }
-}
+  return (
+      <table className={classNames(['wdf','wdf_data'])}>
+        <tbody>
+          {rows}
+        </tbody>
+      </table> );
+};
 
-var _uniqueCounter = 0 ;
-const getUniqueId = () => _uniqueCounter++;
 
 export class Table extends Component {
   static propTypes = {
@@ -66,22 +74,54 @@ export class Table extends Component {
 
   constructor(props) {
     super( props) ;
-    this.state = {
-      id : `wdf_id_${getUniqueId()}`,
-      formats : this.props.formats ||
-      this.props.df.columnSet.getFormats({
-        by_types: {
-          link: (link)=> <LinkComponent link={link}/>
-        }
-      })
+    this.state = this.newState(props);
+  }
+
+  newState({columns}){
+    return {
+      formats : columns,
     };
+  }
+
+  componentWillReceiveProps(newprops){
+    this.setState(this.newState(newprops));
+  }
+
+  setMasker({row_iidx, col_idx, elem}){
+    if( !_.isArray(this.maskers)) {
+      this.maskers = [];
+    }
+    if( !_.isArray(this.maskers[col_idx]) ) {
+      this.maskers[col_idx] = [];
+    }
+    if( !u$.isNullish(elem) || row_iidx < this.maskers[col_idx].length ){
+      this.maskersMaxWidth = undefined ;
+      this.maskers[col_idx][row_iidx] = elem ;
+    }
+
+  }
+
+  maskersMaxWidth() {
+    if (!this.maskersMaxWidth) {
+      this.maskersMaxWidth = this.maskers ?
+          this.maskers.map(
+              (elems) => elems.reduce((p, c)=> {
+                let w = c || c.scrollWidth;
+                return w > p ? w : p;
+              }, 0)
+          ) :
+          undefined;
+    }
+    return this.maskersMaxWidth;
   }
 
   render() {
     return (
         <div>
-          <HeaderTable id={this.state.id} formats={this.state.formats}/>
-          <DataTable id={this.state.id} df={this.props.df} formats={this.state.formats}/>
+          <HeaderTable {...this.state}
+              componentRoot={this}/>
+          <DataTable {...this.state} df={this.props.df}
+              componentRoot={this}/>
         </div>
     );
   }
@@ -90,21 +130,30 @@ export class Table extends Component {
   //this.markOverflownColumn();
 };
 
+
+var tableStore = store('table');
+
+
 export default class TableView extends Component {
+
   constructor(props){
     super(props);
-    this.load_wdf(this.props);
+    this.state = tableStore.state();
   }
-  componentWillReceiveProps(newprops){
-    this.setState({df: null});
-    this.load_wdf(newprops);
+
+  onNewState = () =>  this.setState( tableStore.state());
+
+  componentDidMount() {
+    ee.on(tableStore.event_name,this.onNewState);
   }
-  load_wdf({webfile}){
-    webutils.http_promise('GET', '/.raw' + webfile.path())
-        .then( (s)=> this.setState( {df: DataFrame.parse_wdf(s)} ) );
+
+  componentWillUnmount() {
+    ee.removeListener(tableStore.event_name,this.onNewState);
   }
+
   render(){
-    let df = this.state && this.state.df;
-    return df && <Table df={ df } /> ;
+    return this.state.df ?
+        <Table {...this.state} /> :
+        <div>...table loading...</div> ;
   }
 };

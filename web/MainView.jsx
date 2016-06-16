@@ -1,18 +1,21 @@
-import {subscribeEvent,EVENTS} from './dispatcher.jsx';
+import {subscribeEvent,EVENTS,store} from './dispatcher.jsx';
 import {getPath} from './PathStore.jsx';
 import React, {PropTypes, Component} from 'react';
 import ReactDOM from 'react-dom';
 import _ from 'lodash';
 import webutils from './webutils.jsx';
 
-import renderer_mapping from '../render_mapping';
 
-export const MainView = subscribeEvent(EVENTS.PATH_CHANGE,getPath,
-    ({path}) => {
-      var component = renderer_mapping(path.mime()).component;
-      var View = require('./views/' + component + '.jsx').default;
-      console.log('wv:',path.path());
-      return <View webfile={path}/>;
+const pathStore = store('path');
+export const MainView = subscribeEvent(pathStore,
+    ({path,config}) => {
+      if(path && config) {
+        var View = require('./views/' + config.view + '.jsx').default;
+        console.log('wv:',path.path());
+        return <View />;
+      }else{
+        return <div />;
+      }
     }
 );
 

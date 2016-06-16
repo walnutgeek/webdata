@@ -1,7 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import Icon from './Icon.jsx';
-import {subscribeEvent,EVENTS} from './dispatcher.jsx';
+import {subscribeEvent,store,EVENTS} from './dispatcher.jsx';
 import {getPath} from './PathStore.jsx';
 
 const Link = ({path}) => (
@@ -10,7 +10,7 @@ const Link = ({path}) => (
     </a> {path.dir ? '/':''}</span> );
 
 
-export const BreadCrumbs = subscribeEvent(EVENTS.PATH_CHANGE,getPath,
+export const BreadCrumbs = subscribeEvent(store('path'),
     ({path}) => (
       <ol>{ path && path.enumerate().map(
               part => <Link path={part} key={part.path()} />

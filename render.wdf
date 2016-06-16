@@ -1,8 +1,8 @@
-{"columns": ["pattern",          "component",    "load",           "icon"] }
+{"columns": ["pattern",          "view",         "store",          "icon"] }
 ["text/html",                    "html",         null,             "file-text-o"]
-["text/plain",                   "text",         "scan",           "file-text-o"]
+["text/plain",                   "text",         "raw",            "file-text-o"]
 ["text/x-markdown",              "markdown",     "raw",            "file-text-o"]
-["text/x-rst",                   "rst",          "html",           "file-text-o"]
+["text/x-rst",                   "rst",          "raw",           "file-text-o"]
 ["video/*",                      "video",        null,             "file-video-o"]
 ["audio/*",                      "audio",        null,             "file-audio-o"]
 ["application/javascript",       "code",         "raw",            "file-code-o"]
@@ -12,8 +12,8 @@
 ["text/x-java-source",           "code",         "raw",            "file-code-o"]
 ["application/json",             "code",         "raw",            "file-code-o"]
 ["image/*",                      "image",        null,             "file-image-o"]
-["text/csv",                     "table",        "raw",            "table"]
-["text/wdf",                     "table",        "raw",            "table"]
+["text/csv",                     "table",        "table",          "table"]
+["text/wdf",                     "table",        "table",          "table"]
 ["application/zip",              "download",     null,             "file-archive-o"]
 ["application/x-rar-compressed", "download",     null,             "file-archive-o"]
 ["application/java-archive",     "download",     null,             "file-archive-o"]

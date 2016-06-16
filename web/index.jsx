@@ -6,12 +6,14 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import {BreadCrumbs} from './BreadCrumbs.jsx'
 import {MainView} from './MainView.jsx'
-import dispatch,{ACTIONS} from './dispatcher.jsx';
+import {dp,ACTIONS,registerStores} from './dispatcher.jsx';
 
 import _ from 'lodash';
 import u$ from 'wdf/utils';
 import webutils from './webutils.jsx'
 import WebPath from 'wdf/WebPath';
+
+registerStores(['path','table','raw']);
 
 window.onpopstate = function(event){
     navigate(event.state.path);
@@ -23,15 +25,27 @@ function navigate(path, stateAction){
       var method =  'replace' === stateAction ? 'replaceState' : 'pushState';
       window.history[method]({path: path},path,path);
   }
-  dispatch.dispatch({
+  dp.dispatch({
     actionType: ACTIONS.NAVIGATE,
     path:  path,
   });
 }
 
+const App = (props) => (
+    <div id="app">
+      <nav id="header">
+        <BreadCrumbs />
+      </nav>
+      <div id="logo" data-href="/"></div>
+      <div id="spacer"></div>
+      <div id="main">
+        <MainView />
+      </div>
+    </div>
+);
+
 document.addEventListener("DOMContentLoaded", function() {
-  ReactDOM.render( <BreadCrumbs />, document.getElementById('header') );
-  ReactDOM.render( <MainView />, document.getElementById('main'));
+  ReactDOM.render( <App />, document.getElementById('app') );
   document.querySelector('#header')
       .addEventListener( 'call_navigate',
         function(e){

@@ -1,13 +1,13 @@
+import {subscribeEvent,store} from '../dispatcher.jsx';
+
 import React from 'react';
 import ReactDOM from 'react-dom';
+import marked from "marked";
 
-var Markdown = React.createClass({
-  render() {
-    return (
-        <div className="markdown">
-          md
+export default subscribeEvent(store('raw'),
+    ({raw}) => {console.log(raw);return (
+        <div className="markdown" dangerouslySetInnerHTML={ {__html:marked(raw||'')} } >
         </div>
-    );
-  }
-});
-export default Markdown;
+    );}
+);
+;

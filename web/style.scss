@@ -30,22 +30,7 @@ $header_hight: 40;
   }
 }
 
-#html_frame {
-  width: 100%;
-  height: 100vh;
-}
-
 i svg {
-  vertical-align:text-bottom;
+  vertical-align: text-bottom;
 }
 
-.dash-anim {
-  stroke-dasharray: 15 15;
-  animation: dash 1s infinite ;
-}
-
-@keyframes dash {
-  to {
-    stroke-dashoffset: 30;
-  }
-}
