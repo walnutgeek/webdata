@@ -13,19 +13,19 @@ const Masker = ({val,mounted}) => ( <div ref={mounted} style={styles.wdf_masker}
 
 function mounted_callback(componentRoot, col_idx,row_iidx){
   return function(elem) {
-    componentRoot.setMasker({row_iidx, col_idx, elem});
+    componentRoot.setMasker(row_iidx, col_idx, elem);
   };
 }
 
-export const HeaderTable = ({id,formats,componentRoot}) => (
-    <table style={styles.wdf_table} className={classNames(['wdf','wdf_header', id])}>
+export const HeaderTable = ({formats,componentRoot}) => (
+    <table style={styles.wdf_table} className={classNames(['wdf','wdf_header'])}>
       <tbody>
       <tr style={styles.cell_borders} className="wdf">{formats.map(
           (col) =>
               <th style={m(styles.cell_borders_padding,styles.cell_borders)}
                   className="wdf" key={col.name} data-column={col.name}>
                 <Masker val={col.title}
-                        mounted={ mounted_callback(componentRoot,col.col_idx,0) }
+                        mounted={ mounted_callback(componentRoot,col.index,0) }
                     />
               </th>
       )}</tr>
@@ -42,7 +42,7 @@ export const DataTable  = ({df,formats,componentRoot}) => {
         <td style={m(styles.cell_borders_padding,styles.cell_borders)}
             className="wdf"  key={col.name} data-column={col.name} >
           <Masker val={col.format(df.get(row_idx,col.index))}
-                  mounted={ mounted_callback(componentRoot,col.col_idx,row_idx+1)}
+                  mounted={ mounted_callback(componentRoot,col.index,row_idx+1)}
               />
         </td> )
       );
@@ -87,7 +87,8 @@ export class Table extends Component {
     this.setState(this.newState(newprops));
   }
 
-  setMasker({row_iidx, col_idx, elem}){
+  setMasker(row_iidx, col_idx, elem){
+    console.log("setMasker",row_iidx,col_idx,elem);
     if( !_.isArray(this.maskers)) {
       this.maskers = [];
     }
@@ -101,12 +102,12 @@ export class Table extends Component {
 
   }
 
-  maskersMaxWidth() {
+  calcMaskersMaxWidth() {
     if (!this.maskersMaxWidth) {
       this.maskersMaxWidth = this.maskers ?
           this.maskers.map(
               (elems) => elems.reduce((p, c)=> {
-                let w = c || c.scrollWidth;
+                let w = c && c.scrollWidth;
                 return w > p ? w : p;
               }, 0)
           ) :
