@@ -49,3 +49,9 @@ actions[ACTIONS.NAVIGATE] = (action) => {
   }
 };
 
+actions[ACTIONS.SET_MASKER] = (action) => {
+  if(action.max_width && format.columns){
+    action.max_width.forEach((w,i)=>{format.columns[i].styles={width: w}});
+    emitChange(event_name);
+  }
+};

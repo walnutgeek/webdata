@@ -18,11 +18,11 @@ function mounted_callback(componentRoot, col_idx,row_iidx){
 }
 
 export const HeaderTable = ({formats,componentRoot}) => (
-    <table style={styles.wdf_table} className={classNames(['wdf','wdf_header'])}>
+    <table style={m(styles.wdf_table,styles.table_header)} className={classNames(['wdf','wdf_header'])}>
       <tbody>
       <tr style={styles.cell_borders} className="wdf">{formats.map(
           (col) =>
-              <th style={m(styles.cell_borders_padding,styles.cell_borders)}
+              <th style={m(styles.cell_borders_padding,styles.cell_borders,col.styles)}
                   className="wdf" key={col.name} data-column={col.name}>
                 <Masker val={col.title}
                         mounted={ mounted_callback(componentRoot,col.index,0) }
@@ -33,13 +33,12 @@ export const HeaderTable = ({formats,componentRoot}) => (
     </table>);
 
 export const DataTable  = ({df,formats,componentRoot}) => {
-  console.log(componentRoot);
   var rows = [];
   rows.length = df.getRowCount();
   if(df){
     for(var row_idx = 0 ; row_idx < rows.length; row_idx++ ) {
       let td_columns = formats.map( (col) => (
-        <td style={m(styles.cell_borders_padding,styles.cell_borders)}
+        <td style={m(styles.cell_borders_padding,styles.cell_borders,col.styles)}
             className="wdf"  key={col.name} data-column={col.name} >
           <Masker val={col.format(df.get(row_idx,col.index))}
                   mounted={ mounted_callback(componentRoot,col.index,row_idx+1)}
@@ -54,7 +53,7 @@ export const DataTable  = ({df,formats,componentRoot}) => {
     }
   }
   return (
-      <table className={classNames(['wdf','wdf_data'])}>
+      <table style={m(styles.wdf_table,styles.table_data)} className={classNames(['wdf','wdf_data'])}>
         <tbody>
           {rows}
         </tbody>
@@ -88,7 +87,6 @@ export class Table extends Component {
   }
 
   setMasker(row_iidx, col_idx, elem){
-    console.log("setMasker",row_iidx,col_idx,elem);
     if( !_.isArray(this.maskers)) {
       this.maskers = [];
     }
@@ -114,6 +112,20 @@ export class Table extends Component {
           undefined;
     }
     return this.maskersMaxWidth;
+  }
+
+  componentDidMount() {
+    this.intervalSetWidth = setInterval( ()=>{
+      if( ! this.maskersMaxWidth ){
+        dp.dispatch({
+          actionType: ACTIONS.SET_MASKER, 
+          max_width: this.calcMaskersMaxWidth() });
+      }
+    },1000)
+  }
+
+  componentWillUnmount() {
+    clearInterval(this.intervalSetWidth);
   }
 
   render() {

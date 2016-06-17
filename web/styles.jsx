@@ -10,6 +10,9 @@ const styles = {
   cell_borders_padding: {
     padding: 2
   },
+  text_padding: {
+    padding: 4
+  },
   wdf_masker: {
     overflow: 'hidden',
     width: '100%',
@@ -18,6 +21,14 @@ const styles = {
   html_frame :{
     width: '100%',
     height: '100vh'
+  },
+  table_header:{
+    position: 'fixed',
+    top: 40,
+    background: 'grey'
+  },
+  table_data:{
+    marginTop: 24
   },
   even_odd_row: [
     {}, //even
