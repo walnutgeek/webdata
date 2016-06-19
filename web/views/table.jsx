@@ -113,15 +113,16 @@ export class Table extends Component {
     }
     return this.maskersMaxWidth;
   }
-
+  ensureColumnSizes = () => {
+    if( ! this.maskersMaxWidth ){
+      dp.dispatch({
+        actionType: ACTIONS.SET_MASKER,
+        max_width: this.calcMaskersMaxWidth() });
+    }
+  }
   componentDidMount() {
-    this.intervalSetWidth = setInterval( ()=>{
-      if( ! this.maskersMaxWidth ){
-        dp.dispatch({
-          actionType: ACTIONS.SET_MASKER, 
-          max_width: this.calcMaskersMaxWidth() });
-      }
-    },1000)
+    setTimeout(this.ensureColumnSizes, 0);
+    this.intervalSetWidth = setInterval( this.ensureColumnSizes,1000);
   }
 
   componentWillUnmount() {
