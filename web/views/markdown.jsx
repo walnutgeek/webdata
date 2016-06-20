@@ -7,9 +7,11 @@ import styles,{m} from '../styles.jsx';
 
 
 export default subscribeEvent(store('raw'),
-    ({raw}) => {console.log(raw);return (
-        <div style={styles.text_padding} className="markdown" dangerouslySetInnerHTML={ {__html:marked(raw||'')} } >
+    ({raw}) => (
+        <div style={styles.text_padding} 
+             className="markdown" 
+             dangerouslySetInnerHTML={ {__html:marked(raw||'')} } >
         </div>
-    );}
+    )
 );
 ;

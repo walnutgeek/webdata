@@ -8,6 +8,7 @@
 ["application/javascript",       "code",         "raw",            "file-code-o"]
 ["text/jsx",                     "code",         "raw",            "file-code-o"]
 ["application/x-python",         "code",         "raw",            "file-code-o"]
+["text/css",                     "code",         "raw",            "file-code-o"]
 ["text/x-c",                     "code",         "raw",            "file-code-o"]
 ["text/x-java-source",           "code",         "raw",            "file-code-o"]
 ["application/json",             "code",         "raw",            "file-code-o"]

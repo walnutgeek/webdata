@@ -1,13 +1,12 @@
-import React from 'react';
-import ReactDOM from 'react-dom';
+import {subscribeEvent,store} from '../dispatcher.jsx';
 
-var Text = React.createClass({
-  render() {
-    return (
-        <div className="text">
-          text
-        </div>
-    );
-  }
-});
-export default Text;
+import React from 'react';
+import styles,{m} from '../styles.jsx';
+
+
+export default subscribeEvent(store('raw'),
+    ({raw}) => (
+        <pre style={styles.text_padding} >{raw}
+        </pre>
+    )
+);
