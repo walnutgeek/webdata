@@ -1,36 +1,5 @@
-$header_hight: 40;
+html,body,#container,#app{height:100%;width:100%;margin:0;padding:0}
 
-#logo{
-  position: fixed;
-  top: 0px;
-  left: 0px;
-  height: #{$header_hight}px;
-  width: #{($header_hight*1.6)}px;
-  background: url('WebData.svg') no-repeat right top;
-  background-size: contain;
-}
+i svg { vertical-align: text-bottom }
 
-#header,#spacer {
-  height: #{$header_hight}px;
-  width: 100%;
-}
-
-#header {
-  position: fixed;
-  background-color: lightskyblue;
-  border-bottom: 1px solid black;
-  ol {
-    margin-left: #{$header_hight}px;
-    display: inline-block;
-    li{
-      padding-left: 2px;
-      padding-right: 2px;
-      display: inline-block;
-    }
-  }
-}
-
-i svg {
-  vertical-align: text-bottom;
-}
 

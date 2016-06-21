@@ -25,8 +25,8 @@ describe( 'tests', function() {
         render('text/x-markdown'),
         {
           "pattern":"text/x-markdown",
-          "component":"markdown",
-          "load":"raw",
+          "view":"markdown",
+          "store":"raw",
           "icon":"file-text-o"});
   });
 });

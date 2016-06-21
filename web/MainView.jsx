@@ -1,9 +1,5 @@
 import {subscribeEvent,EVENTS,store} from './dispatcher.jsx';
-import {getPath} from './PathStore.jsx';
 import React, {PropTypes, Component} from 'react';
-import ReactDOM from 'react-dom';
-import _ from 'lodash';
-import webutils from './webutils.jsx';
 
 
 const pathStore = store('path');
@@ -11,7 +7,7 @@ export const MainView = subscribeEvent(pathStore,
     ({path,config}) => {
       if(path && config) {
         var View = require('./views/' + config.view + '.jsx').default;
-        console.log('wv:',path.path());
+        console.log('main_view:',path.path(),config.view);
         return <View />;
       }else{
         return <div />;

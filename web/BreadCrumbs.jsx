@@ -1,8 +1,7 @@
 import React from 'react';
-import ReactDOM from 'react-dom';
+import {header_height, styles, m} from './styles.jsx';
 import Icon from './Icon.jsx';
 import {subscribeEvent,store,EVENTS} from './dispatcher.jsx';
-import {getPath} from './PathStore.jsx';
 
 const Link = ({path}) => (
     <span><a className="wdf_link" href={path.path()}>
@@ -12,7 +11,10 @@ const Link = ({path}) => (
 
 export const BreadCrumbs = subscribeEvent(store('path'),
     ({path}) => (
-      <ol>{ path && path.enumerate().map(
+      <ol style={{
+      marginLeft: header_height,
+      display: 'inline-block' }}>
+        { path && path.enumerate().map(
               part => <Link path={part} key={part.path()} />
       ) } </ol>
     )

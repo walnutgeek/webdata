@@ -7,11 +7,7 @@ import ReactDOM from 'react-dom';
 import {BreadCrumbs} from './BreadCrumbs.jsx'
 import {MainView} from './MainView.jsx'
 import {dp,ACTIONS,registerStores} from './dispatcher.jsx';
-
-import _ from 'lodash';
-import u$ from 'wdf/utils';
-import webutils from './webutils.jsx'
-import WebPath from 'wdf/WebPath';
+import {header_height, webdata_svg} from './styles.jsx';
 
 registerStores(['path','table','raw']);
 
@@ -33,19 +29,41 @@ function navigate(path, stateAction){
 
 const App = (props) => (
     <div id="app">
-      <nav id="header">
+      <nav id="header"
+           style={{
+            top: 0,
+            left: 0,
+            height: header_height,
+            width: '100%',
+            position: 'absolute',
+            backgroundColor: 'lightskyblue',
+            borderBottom: '1px solid black' }}>
         <BreadCrumbs />
       </nav>
-      <div id="logo" data-href="/"></div>
-      <div id="spacer"></div>
-      <div id="main">
+      <div id="logo" 
+           style={{
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            height: header_height,
+            width: header_height*1.6,
+            background: `url(${webdata_svg}) no-repeat right top`,
+            backgroundSize: 'contain'
+          }} 
+           data-href="/"></div>
+      <div id="main"
+           style={{
+              marginTop: header_height,
+              width: '100%',
+              height: '100%',
+              overflow: 'auto'}}>
         <MainView />
       </div>
     </div>
 );
 
 document.addEventListener("DOMContentLoaded", function() {
-  ReactDOM.render( <App />, document.getElementById('app') );
+  ReactDOM.render( <App />, document.getElementById('container') );
   document.querySelector('#header')
       .addEventListener( 'call_navigate',
         function(e){

@@ -1,8 +1,12 @@
+export const header_height = 40 ;
+export const webdata_svg = require('./WebData.svg');
 
-const styles = {
+export const win_dims = () => ({ width: window.innerWidth, height: window.innerHeight });
+
+export const styles = {
   wdf_table: {
     tableLayout: 'fixed',
-    borderCollapse: 'collapse',
+    borderCollapse: 'collapse'
   },
   cell_borders: {
     border: '1px solid black'
@@ -17,10 +21,6 @@ const styles = {
     overflow: 'hidden',
     width: '100%',
     whiteSpace: 'nowrap'
-  },
-  html_frame :{
-    width: '100%',
-    height: '100vh'
   },
   table_header:{
     position: 'fixed',

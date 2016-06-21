@@ -1,11 +1,10 @@
 require('highlight.js/styles/default.css');
-import {subscribeEvent,store} from '../dispatcher.jsx';
-
-import React from 'react';
 import hljs from 'highlight.js';
-import styles,{m} from '../styles.jsx';
-
 const to_html = (raw) => hljs.highlightAuto(raw||'').value
+
+import {subscribeEvent,store} from '../dispatcher.jsx';
+import React from 'react';
+import styles,{m} from '../styles.jsx';
 
 export default subscribeEvent(store('raw'),
     ({raw}) => (

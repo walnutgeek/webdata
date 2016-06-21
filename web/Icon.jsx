@@ -1,11 +1,9 @@
-import _ from 'lodash';
 import React from 'react';
-import ReactDOM from 'react-dom';
 import icons from '../black/icons';
 
 function set_kv(s,k,v){
-  var re = new RegExp('(\\s+' + k + '=[\'"])(\\w+)([\'"]\\s+)');
-  return s.replace( re, '$1' + v + '$3' );
+  var re = new RegExp(`(\\s+${k}=['"])(\\w+)(['"]\\s+)`);
+  return s.replace( re, `$1${v}$3` );
 }
 
 function set_spin(s){
@@ -13,7 +11,7 @@ function set_spin(s){
   return s.replace( re, '><animateTransform attributeName="transform" type="rotate" from="0 896 896" to="360 896 896" dur="5s" repeatCount="indefinite" /></path></svg>' );
 }
 
-export function Icon(props){
+export default function Icon(props){
   var w = props.width || '1em' ;
   var h = props.height || '1em' ;
   var svg = set_kv(set_kv(icons[props.name],'width',w),'height',h) ;
@@ -22,5 +20,4 @@ export function Icon(props){
   }
   return <i dangerouslySetInnerHTML={ {__html:svg} } />;
 }
-export default Icon;
 
