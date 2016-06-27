@@ -15,6 +15,7 @@ export const styles = {
     padding: 2
   },
   text_padding: {
+    marginTop: header_height,
     padding: 4
   },
   wdf_masker: {
@@ -28,7 +29,7 @@ export const styles = {
     background: 'grey'
   },
   table_data:{
-    marginTop: 24
+    marginTop: 24 + header_height // this is hacky
   },
   even_odd_row: [
     {}, //even

@@ -3,6 +3,7 @@ import React, {PropTypes, Component} from 'react';
 
 
 const pathStore = store('path');
+
 export const MainView = subscribeEvent(pathStore,
     ({path,config}) => {
       if(path && config) {

@@ -11,6 +11,7 @@ const key2val = (v,k) => k;
 
 export const ACTIONS = _.mapValues({
   NAVIGATE : 0,
+  WINDOW_RESIZE: 0,
   SET_MASKER: 0,
 },key2val);
 
@@ -36,6 +37,10 @@ export function store(key){
   return stores[key];
 }
 
+export function stores(keys){
+  return keys.map(store);
+}
+
 export function waitFor(key,topic){
   const token = stores[key].tokens[topic];
   // console.log(key,topic,token);
@@ -46,32 +51,46 @@ export function registerStores(stores){
   stores.forEach((key)=>store(key));
 }
 
-export const EVENTS = _.mapValues({
-  PATH_CHANGE : 0,
-  VIEW_REDRAW: 0,
-},key2val);
-
 export const emitChange = (event,...args) =>
     ee.emit(event,...args);
 
+export const EVENTS = _.mapValues({
+  PATH_CHANGE : 0,
+  VIEW_REDRAW: 0,
+  WINDOW_RESIZED: 0
+},(v,k)=> ({
+    name: k,
+    notify: emitChange.bind(this, k)
+}) );
+
 import React, {Component} from 'react';
 
-
-export const subscribeEvent = (theStore, DecoratedComponent)=>(
-    class extends Component {
+export const subscribeEvent = (stores, DecoratedComponent)=>{
+    if(!_.isArray(stores)){
+      stores = [stores];
+    }
+    return class extends Component {
       constructor(props){
         super(props);
-        this.state = theStore.state();
+        this.state = {} ;
+        this.handlers = stores.map((store)=>{
+          Object.assign( this.state, store.state());
+          return {
+            store,
+            callback: () => this.setState(store.state())
+          };
+        });
       }
       componentDidMount() {
-        ee.on(theStore.event_name,this.onNewState);
+        this.handlers.forEach(({store,callback})=>
+          {ee.on(store.event.name,callback)});
       }
       componentWillUnmount() {
-        ee.removeListener(theStore.event_name,this.onNewState);
+        this.handlers.forEach(({store,callback})=>
+        {ee.removeListener(store.event.name,callback)});
       }
-      onNewState = () =>  this.setState(theStore.state())
       render(){
         return <DecoratedComponent {...this.props} {...this.state} />;
       }
-    }
-);
+    };
+};

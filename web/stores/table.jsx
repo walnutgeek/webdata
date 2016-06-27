@@ -1,4 +1,4 @@
-import {dp,ACTIONS,EVENTS,emitChange,store,waitFor} from '../dispatcher.jsx';
+import {dp,ACTIONS,EVENTS,store,waitFor} from '../dispatcher.jsx';
 import webutils from '../webutils.jsx';
 import DataFrame from 'wdf/DataFrame';
 import React from 'react';
@@ -14,12 +14,12 @@ export const LinkComponent = ({link})=>(
     <a className="wdf_link" href={ link.href }>
       { link.text || link.href }</a>);
 
-export const event_name = EVENTS.VIEW_REDRAW;
+export const event = EVENTS.VIEW_REDRAW;
 
 function set_df(df){
   table = {df: df};
   reset_format();
-  emitChange(event_name);
+  event.notify();
 }
 
 function reset_format(){
@@ -52,6 +52,6 @@ actions[ACTIONS.NAVIGATE] = (action) => {
 actions[ACTIONS.SET_MASKER] = (action) => {
   if(action.max_width && format.columns){
     action.max_width.forEach((w,i)=>{format.columns[i].styles={width: w}});
-    emitChange(event_name);
+    event.notify();
   }
 };

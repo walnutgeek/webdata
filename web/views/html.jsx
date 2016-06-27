@@ -1,5 +1,6 @@
 import React from 'react';
-import {subscribeEvent,store} from '../dispatcher.jsx';
+import {subscribeEvent,stores} from '../dispatcher.jsx';
+import {header_height, win_dims} from '../styles.jsx' ;
 
 import ReactDOM from 'react-dom';
 
@@ -31,12 +32,14 @@ import ReactDOM from 'react-dom';
 //        }
 //    },
 
-export default subscribeEvent(store('path'),
-    ({path}) =>
+export default subscribeEvent(stores(['path','resize']),
+    ({path,window_size}) =>
         (<iframe
             style={{
-                width: '100%',
-                height: '100%',
+                position: 'absolute',
+                top: header_height,
+                width: '100%' ,
+                height: window_size.height - header_height,
                 border: 0
                 }}
             src={`/.raw${path.path()}`} >

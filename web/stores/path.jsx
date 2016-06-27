@@ -1,4 +1,4 @@
-import {dp,ACTIONS,EVENTS,emitChange} from '../dispatcher.jsx';
+import {dp,ACTIONS,EVENTS} from '../dispatcher.jsx';
 import WebPath from 'wdf/WebPath';
 import renderer_mapping from '../../render_mapping';
 
@@ -13,13 +13,13 @@ export const state = () => ({
   config: _renderConfig
 });
 
-export const event_name = EVENTS.PATH_CHANGE;
+export const event = EVENTS.PATH_CHANGE;
 
 export const actions = {};
 
 actions[ACTIONS.NAVIGATE] = ({path}) => {
   _path = WebPath.ensurePath(path);
   _renderConfig = renderer_mapping(_path.mime());
-  emitChange(event_name);
+  event.notify();
 };
 

@@ -6,11 +6,11 @@ var _raw ;
 export function state () {
   return {raw: _raw};
 }
-export const event_name = EVENTS.VIEW_REDRAW ;
+export const event = EVENTS.VIEW_REDRAW ;
 
 function set_raw(s){
   _raw = s;
-  emitChange(event_name);
+  event.notify();
 }
 
 export const actions = {};

@@ -158,11 +158,11 @@ export default class TableView extends Component {
   onNewState = () =>  this.setState( tableStore.state());
 
   componentDidMount() {
-    ee.on(tableStore.event_name,this.onNewState);
+    ee.on(tableStore.event.name,this.onNewState);
   }
 
   componentWillUnmount() {
-    ee.removeListener(tableStore.event_name,this.onNewState);
+    ee.removeListener(tableStore.event.name,this.onNewState);
   }
 
   render(){

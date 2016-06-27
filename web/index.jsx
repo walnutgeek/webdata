@@ -35,14 +35,14 @@ const App = (props) => (
             left: 0,
             height: header_height,
             width: '100%',
-            position: 'absolute',
+            position: 'fixed',
             backgroundColor: 'lightskyblue',
             borderBottom: '1px solid black' }}>
         <BreadCrumbs />
       </nav>
       <div id="logo" 
            style={{
-            position: 'absolute',
+            position: 'fixed',
             top: 0,
             left: 0,
             height: header_height,
@@ -51,12 +51,7 @@ const App = (props) => (
             backgroundSize: 'contain'
           }} 
            data-href="/"></div>
-      <div id="main"
-           style={{
-              marginTop: header_height,
-              width: '100%',
-              height: '100%',
-              overflow: 'auto'}}>
+      <div id="main" >
         <MainView />
       </div>
     </div>
